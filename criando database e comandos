@@ -43,3 +43,7 @@ vai aparecer isso logo depois do enter ->
 db.pessoas.find() -> mostra os dados da database atual (porém bagunçãdo)
 
 db.pessoas.find().pretty() -> mostra os dados da database atual (porém tudo organizado como uma api)
+
+
+db.pessoas.find({ esta_empregado: true}) -> realiza uma busca mais precisa, aqui estamos procurando por esta_empregado: true, é tipo o WHERE do SQL
+db.pessoas.find({ esta_empregado: true}).count() -> realiza uma busca mais precisa como acima, porém mostra o numero total extado por causa do count
