@@ -12,3 +12,29 @@ db.nome_da_colecao.insert() - Insere dados numa coleção, ex.: db.minhacolecao.
 db.nome_da_colecao.update(consulta, o_que_atualizar, opções) - Atualiza(update) dados em um documento(campo), ex.: db.minhacolecao.update({'content':'sobre mongodb'},{$set:{'content':'mongodb definitivo tutorial'}}), altera o documento de nome content que tem o valor: sobre mongodb por mongodb definitivo tutorial;
 db.nome_da_colecao.drop() - Deleta uma coleção, ex.: db.minhacolecao.drop(), deleta a coleção minhacolecao.
 db.dados.remove({"mail": "james@brown.org"}) - Remove um documento( linha em SQL ) que possui uma coluna( campo em SQL ) mail igual à james@brown.org.
+
+
+
+
+
+
+Se você inserir dados sem informar o _id ele será gerado automaticamente, tipo assim:
+db.dados.insert({ "nome": "James Brown", "mail": "james@brown.org" })
+WriteResult({ "nInserted" : 1 })
+
+
+
+Criando uma collection(ela é criada automaticamente ao inserir os dados) e já inserindo dados:
+> use terminalroot
+> db.createCollection("dados")
+{ "ok" : 1 }
+> db.dados.insert({
+... "_id" : 1,
+... "nome" : "Marcos Oliveira",
+... "mail" : "marcos@gentoo.org"
+... })
+WriteResult({ "nInserted" : 1 })
+
+
+
+fonte: https://terminalroot.com.br/2020/02/mongodb.html
