@@ -1,0 +1,7 @@
+sudo systemctl status mongod -> verificar se esta ativo ou inativo
+
+sudo systemctl start mongod -> inicializa o mongodb
+mongo -> depois de startar, connecta no mongodb 
+
+sudo systemctl stop mongod -> para o mongodb
+
