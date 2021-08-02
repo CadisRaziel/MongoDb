@@ -1,42 +1,134 @@
-//mostrar os banco de dados
+Até a linha 186 -> são dados que eu estudei, após isso são dados encontrados na internet em que li.
+
+
+****mostrar os banco de dados****
 show dbs -> lista todos os bancos de dados, o alias desse comando é show databases;
 
-show dbs -> lista todos os bancos de dados, o alias desse comando é show databases;
-use [nome-do-banco] -> selecionar um banco de dados, ex.: use admin;
+//====================================================================================================================================================
+
+****criar banco de dados****
+use [nome-do-banco] -> cria uma nova data base porém só é criado de fato quando inserimos dados nele
+use [nome-do-banco] -> selecionar um banco de dados criado
+
+//====================================================================================================================================================
+
+****banco de dados que esta no momento****
 db -> verifica qual o banco de dados em uso no momento;
-use terminalroot -> cria um banco de dados, mas só passa a existir efetivamente quando você cria uma collection e insere algum dado nela, se não o mesmo não estará disponível quando você listar os bancos, deixará de existir;
-db.dropdatabase() -> apaga um banco de dados, usar após selecionar use nome-do-banco que deseja;
 
+//====================================================================================================================================================
+
+****banco fake****
+use terminalroot -> cria um banco de dados, mas só passa a existir efetivamente quando você cria uma collection e insere algum dado nela, se não o mesmo não estará disponível quando você listar os bancos, deixará de existir;
+
+//====================================================================================================================================================
+
+****excluindo um banco de dados completo****
+db.dropDatabases() -> apaga um banco de dados, usar após selecionar use nome-do-banco que deseja;
+
+//====================================================================================================================================================
+
+****mostrando as collections****
 show collections - Mostra as collections;
+show collections -> mostra as collections criadas (lembre-se as collections é isso 'db.pessoas.insertOne' isso é como se fosse uma tabela no SQL, ou seja aqui criamos a collections 'pessoas')
+
+//====================================================================================================================================================
+
+****criando collection****
 createcollection() - Cria uma collection, protótipo dela é createcollection("nomedatabela", opções), exemplo: db.createcollection("minhacolecao").
 
+//====================================================================================================================================================
+
+****inserindo dados na collection****
 db.nome_da_colecao.insert() - Insere dados numa coleção, ex.: db.minhacolecao.insert( { "_id" : 0, "site" : "terminal root", "url" : "terminalroot.com.br", "content" : "sobre mongodb" } );
+db.pessoas.insertOne({nome: "Vitor", idade: 28, profissao: "Programador", esta_empregado: true }) -> aqui criamos o que seria uma tabela pra database 'nomeDb'
+(repare que é igual uma api, podemos inserir String, Int, bool, isso seria como se fosse uma tabela no SQL)
+insertOne({}) -> insere um documento, repare que é um document {}
+insertMany([]) -> insere varios documentos, repare que é um array []
+{
+	"acknowledged" : true,
+	"insertedId" : ObjectId("61006093334308f0d105c0fa") -> quando aparecer isso é que deu certo e repare que ele nos da um ID, repare que esse ID é como se fosse a PRIMARY_KEY do SQL
+}
+Criando varios documentos ->
+db.pessoas.insertMany([
+    {nome: "vitor", idade: 28, profissao: "programador", esta_empregado: true},
+    {nome: "Batman", idade: 40, profissao: "heroi", esta_empregado: true},
+    {nome: "flash", idade: 37, profissao: "heroi", esta_empregado: false},
+    {nome: "aquaman", idade: 42, profissao: "heroi", esta_empregado: false},
+]);
+vai aparecer isso logo depois do enter ->
+{
+	"acknowledged" : true,
+	"insertedIds" : [
+		ObjectId("610063d3334308f0d105c0fc"),
+		ObjectId("610063d3334308f0d105c0fd"),
+		ObjectId("610063d3334308f0d105c0fe"),
+		ObjectId("610063d3334308f0d105c0ff")
+	]
+}
 
+//====================================================================================================================================================
+
+****deletando uma collection****
 db.nome_da_colecao.drop() - Deleta uma coleção, ex.: db.minhacolecao.drop(), deleta a coleção minhacolecao.
+
+//====================================================================================================================================================
+
+****removendo dados da collection****
 db.dados.remove({"mail": "james@brown.org"}) - Remove um documento( linha em SQL ) que possui uma coluna( campo em SQL ) mail igual à james@brown.org.
+> db.pessoas.deleteOne({name: "ronaldo"}) -> vai deletar apenas UM dado que tiver o nome 'ronaldo'
+{ "acknowledged" : true, "deletedCount" : 1 } -> isso vai aparecer se deu certo
+> 
+db.pessoas.deleteMany({name: "ronaldo"}) -> vai deletar TODOS os dados que tiverem o nome 'ronaldo'
+db.pessoas.deleteMany({}) -> deleta tudo da collection
 
+//====================================================================================================================================================
 
-//PESQUISA
+****pesquisa dentro da collection****
 db.nome_da_colecao.find().pretty() - Ler todos os dados de uma coleção, ex.: db.system.users.find().pretty() , ler todos os dados da coleção system.users, equivalente à select * from tabela. essa saída sairá formatada, se quiser os dados numa única linha, use sem o método .pretty(): db.system.users.find();
+db.pessoas.find().pretty() -> mostra os dados da database atual (porém tudo organizado como uma api)
 db.pessoas.findOne() -> mostra a primeira pessoa cadastrada 
 db.pessoas.findOne({nome: "Vitor"}) -> mostra as pessoas com nome Vitor cadastrada
+db.pessoas.find({ esta_empregado: true}) -> realiza uma busca mais precisa, aqui estamos procurando por esta_empregado: true, é tipo o WHERE do SQL
+db.pessoas.find({ esta_empregado: true}).count() -> realiza uma busca mais precisa como acima, porém mostra o numero total extado por causa do count
 
+//====================================================================================================================================================
 
-//ATUALIZANDO DADOS
+****atualizando dados dentro da collection****
 db.nome_da_colecao.update(consulta, o_que_atualizar, opções) -> Atualiza(update) dados em um documento(campo), ex.: db.minhacolecao.update({'content':'sobre mongodb'},{$set:{'content':'mongodb definitivo tutorial'}}), altera o documento de nome content que tem o valor: sobre mongodb por mongodb definitivo tutorial;
-
 db.pessoas.updateOne({nome: "Vitor"}, {$set: { esta_empregado: false }}) -> vai atualizar o esta_empregado para false
 { "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 } -> quando da certo ele mostra essa frase dizendo que modificou 1 item e mostra o que tinha antes 'acknowledged'
-
 db.pessoas.updateMany({}, {$set: {salario: 5000}}) -> ele não só altera como tambem inclui novos dados, aqui eu inclui que TODOS(many) vai ter o salario de 5000
 
 
+//====================================================================================================================================================
+
+****informações sobre ID****
 Se você inserir dados sem informar o _id ele será gerado automaticamente, tipo assim:
 db.dados.insert({ "nome": "James Brown", "mail": "james@brown.org" })
 WriteResult({ "nInserted" : 1 })
 
+//====================================================================================================================================================
 
+****usando operadores para fazer pesquisas e deletes especificos****
+(operadores sempre começam com '$')
+$inc: incrementa inteiros, e decrementa inteiros usando -, pode ser usado em positivos e negativos
+$e: exatamente igual (=)
+$ne: diferente (<> ou !=)
+$gt: maior do que (>)
+$lt: menor do que (<)
+$lte: menor ou igual a (<=)
+$in: o valor está contido em um array de possibilidades, como em um OU. Ex: {idade: {$in: [10,12] }}
+$all: MongoDB permite campos com arrays. Ex: { tags: [“NodeJS”, “MongoDB”] }. Com esse operador, você compara se seu campo multivalorado possui todos os valores de um array específico. Ex: {tags: {$all: [“NodeJS”, “Android”]
+(podemos concatenar os operadores como fiz com 'gte')
+db.pessoas.find({idade: {$gt}}) -> gt quer dizer maior que 30
+db.pessoas.find({idade: {$gte}}) -> gt quer dizer maior ou igual que 30
 
+//-aqui estamos atualizando os dados de pessoas com idade maior 'gt' que 35
+db.pessoas.updateMany({idade: {$gt: 35}}, {$set: {pripridade: true}})
+
+//====================================================================================================================================================
+
+****exemplo de criação de uma collection****
 Criando uma collection(ela é criada automaticamente ao inserir os dados) e já inserindo dados:
 > use terminalroot
 > db.createCollection("dados")
@@ -48,9 +140,714 @@ Criando uma collection(ela é criada automaticamente ao inserir os dados) e já 
 ... })
 WriteResult({ "nInserted" : 1 })
 
+//====================================================================================================================================================
 
+****Tipos de dados que podem ser inclusos na collection****
+db.pessoas.insertOne({
+    name: "Jack", -> String
+    idade: 44, -> Int
+    hobbies: ["Correr", "navegar"], -> Array(listas)
+    esta_trabalhando: true, -> booleanos
+    data_cadastro: new Date(), -> datas
+    caracteristicas: { -> Objetos(documents)
+        cor_dos_olhos_: "pretos",
+        altura: 1.82,
+        perfil: "Extrovertida"
+    }
+})
+
+//====================================================================================================================================================
+
+****Operador de incremento $inc****
+db.pessoas.updateOne({nome: "flash"}, {$inc: {salario: 10000}}) -> o flash tinha 5000 de salario agora vai ter 150000
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 } -> vai aparecer essa mensagem se tudo der certo
+
+//====================================================================================================================================================
+
+****Operador de decremento $inc****
+Repare que o decremento na hora de colocar o valor nós colocamos o sinal de -
+db.pessoas.updateOne({nome: "flash"}, {$inc: {salario: -1000}}) -> o flash tinha 15000 de salario agora vai ter 14000
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 } -> vai aparecer essa mensagem se tudo der certo
+
+//====================================================================================================================================================
+
+****Indice****
+os indices dão prioridades em uma busca de dados conforme queremos(abaixo queremos indice no nome, porém ele poe no id por default), ou seja eles são mais performaticos(sempre inclua nas collections)
+db.pessoas.createIndex({ "nome": 1}) -> cria os indices
+db.pessoas.getIndexes() -> mostra uma lista de incides que tem na collections
+
+//====================================================================================================================================================
+
+****deletando indice****
+db.pessoas.dropIndex("nome_1") -> vai deletar os indices do 'nome_1' ou seja o primeiro
+
+//====================================================================================================================================================
+
+****winningPlan****
+db.pessoas.explain().find({ nome: "flash"}) -> mostra o winningPlan (o que ganhou na velocidade na hora da pesquisa, ou seja mostra na ordem de cima pra baixo o item que foi mais rapido consultado)
+
+//====================================================================================================================================================
+
+****LEIA****
 OBSERVAÇÃO IMPORTANTE: O MONGO DB ACEITA QUE UM CAMPO TENHA MAIS DADOS QUE OUTROS CAMPOS, PORÉM SE NÃO FOR UTILIZADO DA FORMA CORRETA, ISSO PODE SER UM CAOS
 
 
 
 fonte: https://terminalroot.com.br/2020/02/mongodb.html
+fonte: https://imasters.com.br/banco-de-dados/mongodb-para-iniciantes-em-nosql-parte-02
+fonte :https://imasters.com.br/perfil/luizfernando
+
+parte 01 -> https://imasters.com.br/banco-de-dados/mongodb-para-iniciantes-em-nosql
+parte 02 -> https://imasters.com.br/banco-de-dados/mongodb-para-iniciantes-em-nosql-parte-02
+parte 03 -> https://imasters.com.br/banco-de-dados/mongodb-para-iniciantes-em-nosql-parte-03
+parte 04 -> https://imasters.com.br/banco-de-dados/mongodb-para-iniciantes-em-nosql-parte-04
+parte 05 -> https://imasters.com.br/data/mongodb-para-iniciantes-em-nosql-parte-05
+
+
+#parte 01
+MongoDB é um banco de dados de código aberto, gratuito, de alta performance, sem esquemas e orientado à documentos, lançado em fevereiro de 2009 pela empresa 10gen. Foi escrito na linguagem de programação C++ (o que o torna portável para diferentes sistemas operacionais) e seu desenvolvimento durou quase 2 anos, tendo iniciado em 2007.
+
+Já falei de MongoDB na prática aqui no blog em outras três oportunidades, juntamente com a tecnologia Node.js. Confira em:
+
+Tutorial Node.js + MongoDB com driver nativo.
+Tutorial Node.js + MongoDB com ORM.
+Tutorial autenticação em Node.js (onde guardo as credenciais no Mongo).
+No entanto, em ambas ocasiões, MongoDB foi o coadjuvante e pouco falei de suas características, vantagens, desvantagens e como modelar bases reais com ele. Pois bem, esse é o intuito do post de hoje, compartilhar os meus pouco mais de 2 anos – na data que escrevo este post –  de experiência com esse fantástico banco de dados.
+
+Orientado à Documentos
+Por ser orientado à documentos JSON (armazenados em modo binário, apelidado de JSON), muitas aplicações podem modelar informações de modo muito mais natural, pois os dados podem ser aninhados em hierarquias complexas e ainda serem indexáveis e fáceis de buscar, igual ao que já é feito em JavaScript.
+
+
+Bancos de dados mais usados
+Existem vários bancos NOSQL atualmente no mercado porque existem dezenas de problemas de persistência de dados que o SQL tradicional não resolve. Bancos não-relacionais document-based (que armazenam seus dados em documentos), são os mais comuns e mais proeminentes de todos, sendo o seu maior expoente o banco MongoDB como o gráfico abaixo da pesquisa mais recente de bancos de dados utilizados pela audiência do StackOverflow em 2017 mostra.
+
+Dentre todos os bancos não relacionais, o MongoDB é o mais utilizado com um quinto de todos os respondentes alegando utilizar ele em seus projetos, o que é mais do que até mesmo o Oracle, um banco muito mais tradicional.
+
+Basicamente, neste tipo de banco (document-based ou document-oriented), temos coleções de documentos, nas quais cada documento é autossuficiente, ele contém todos os dados que possa precisar, ao invés do conceito de não repetição + chaves estrangeiras do modelo relacional.
+
+A ideia é que você não tenha de fazer JOINs pois eles prejudicam muito a performance em suas queries (são um mal necessário no modelo relacional, infelizmente). Você modela a sua base de forma que a cada query você vai uma vez no banco e com apenas uma chave primária pega tudo que precisa.
+
+Obviamente, isto tem um custo: armazenamento em disco. Não é raro bancos MongoDB consumirem muitas vezes mais disco do que suas contrapartes relacionais.
+
+Quando devo usar MongoDB?
+MongoDB foi criada com Big Data em mente. Ele suporta tanto escalonamento horizontal quanto vertical usando replica sets (instâncias espelhadas) e sharding (dados distribuídos), tornando-o uma opção muito interessante para grandes volumes de dados, especialmente os desestruturados.
+
+Dados desestruturados são um problema para a imensa maioria dos bancos de dados relacionais, mas não tanto para o MongoDB. Quando o seu schema é variável, é livre, usar MongoDB vem muito bem a calhar. Os documentos BSON (JSON binário) do Mongo são schemaless e aceitam quase qualquer coisa que você quiser armazenar, sendo um mecanismo de persistência perfeito para uso com tecnologias que trabalham com JSON nativamente, como JavaScript (e consequentemente Node.js).
+
+
+BSON Document
+Cenários altamente recomendados e utilizados atualmente são catálogos de produtos de e-commerces. Telas de detalhes de produto em ecommerces são extremamente complicadas devido a diversidade de informações aliada às milhares de variações de características entre os produtos que acabam resultando em dezenas de tabelas se aplicado sobre o modelo relacional. Em MongoDB essa problemática é tratada de uma maneira muito mais simples, que explicarei mais adiante.
+
+Além do formato de documentos utilizado pelo MongoDB ser perfeitamente intercambiável com o JSON serializado do JS, MongoDB opera basicamente de maneira assíncrona em suas operações, assim como o próprio Node.js, o que nos permite ter uma persistência extremamente veloz, aliado a uma plataforma de programação igualmente rápida.
+
+Embora o uso de Node.js com bancos de dados relacionais não seja incomum, é com os bancos não-relacionais como MongoDB e Redis que ele mostra todo o seu poder de tecnologia para aplicações real-time e volumes absurdos de requisições na casa de 500 mil/s, com as configurações de servidor adequadas.
+
+Além disso, do ponto de vista do desenvolvedor, usar MongoDB permite criar uma stack completa apenas usando JS uma vez que temos JS no lado do cliente, do servidor (com Node) e do banco de dados (com Mongo), pois todas as queries são criadas usando JS também, como você verá mais à frente.
+
+Quando não devo usar MongoDB?
+Nem tudo são flores e o MongoDB não é uma “bala de prata”, ele não resolve todos os tipos de problemas de persistência existentes.
+
+Você não deve utilizar MongoDB quando relacionamentos entre diversas entidades são importantes para o seu sistema. Se for ter de usar muitas “chaves estrangeiras” e “JOINs”, você está usando do jeito errado, ou, ao menos, não do jeito mais indicado.
+
+Além disso, diversas entidades de pagamento (como bandeiras de cartão de crédito), não homologam sistemas cujos dados financeiros dos clientes não estejam em bancos de dados relacionais tradicionais. Obviamente, isso não impede completamente o uso de MongoDB em sistemas financeiros, mas o restringe apenas a certas partes (como dados públicos).
+
+Em meu post sobre Persistência Poliglota, eu falo bastante dos conceitos por trás de diversos bancos não-relacionais e incluo concorrentes do MongoDB e onde eles devem ser utilizados ao invés deste mecanismo de persistência, dê uma olhada para mais informações neste sentido.
+
+Instalação e Testes
+Diversos players de cloud computing fornecem versões de Mongo hospedadas e prontas para uso como Umbler e mLab, no entanto, é muito importante um conhecimento básico de administração local de MongoDB para entender melhor como tudo funciona. Não focaremos aqui em nenhum aspecto de segurança, de alta disponibilidade, de escala ou sequer de administração avançada de MongoDB. Deixo todas estas questões para você ver junto à documentação oficial no site oficial, onde inclusive você pode estudar e tirar as certificações.
+
+Caso ainda não tenha feito isso, acesse o site oficial do MongoDB e baixe gratuitamente a versão mais recente para o seu sistema operacional, que é a versão 3.4 na data em que escrevo este livro.
+
+Baixe o arquivo compactado e, no caso do Windows, rode o executável que extrairá os arquivos na sua pasta de Arquivos de Programas (não há uma instalação de verdade, apenas extração de arquivos), seguido de uma pasta server/versão, o que está ok para a maioria dos casos, mas que eu prefiro colocar em C:\Mongo ou dentro de Applications no caso do Mac.
+
+Dentro dessa pasta do Mongo podem existir outras pastas, mas a que nos interessa é a pasta bin. Nessa pasta estão uma coleção de utilitários de linha de comando que são o coração do MongoDB (no caso do Windows, todos terminam com .exe):
+
+mongod: inicializa o servidor de banco de dados;
+mongo: inicializa o cliente de banco de dados;
+mongodump: realiza dump do banco (backup binário);
+mongorestore: restaura dumps do banco (restore binário);
+mongoimport: importa documentos JSON ou CSV pro seu banco;
+mongoexport: exporta documentos JSON ou CSV do seu banco;
+entre outros.
+Para subir um servidor de MongoDB na sua máquina é muito fácil: execute o utilitário mongod via linha de comando como abaixo, onde dbpath é o caminho onde seus dados serão salvos (esta pasta já deve estar criada).
+
+C:\mongo\bin> mongod --dbpath C:\mongo\data
+Isso irá iniciar o servidor do Mongo. Uma vez que apareça no prompt “[initandlisten] waiting for connections on port 27017”, está pronto, o servidor está executando corretamente e você já pode utilizá-lo, sem segurança alguma e na porta padrão 27017.
+
+Nota: se já existir dados de um banco MongoDB na pasta data, o mesmo banco que está salvo lá ficará ativo novamente, o que é muito útil para os nossos testes.
+
+Agora abra outro prompt de comando (o outro ficará executando o servidor) e novamente dentro da pasta bin do Mongo, digite:
+
+c:\mongo\bin> mongo
+Após a conexão funcionar, se você olhar no prompt onde o servidor do Mongo está rodando, verá que uma conexão foi estabelecida e um sinal de “>” indicará que você já pode digitar os seus comandos e queries para enviar à essa conexão.
+
+Ao contrário dos bancos relacionais, no MongoDB você não precisa construir a estrutura do seu banco previamente antes de sair utilizando ele. Tudo é criado conforme você for usando, o que não impede, é claro, que você planeje um pouco o que pretende fazer com o Mongo.
+
+O comando abaixo no terminal cliente mostra os bancos existentes nesse servidor:
+
+> show databases
+Se é sua primeira execução ele deve listar as bases admin e local. Não usaremos nenhuma delas. Agora digite o seguinte comando para “usar” o banco de dados “workshop” (um banco que você sabe que não existe ainda):
+
+> use workshop
+O terminal vai lhe avisar que o contexto da variável “db” mudou para o banco workshop, que nem mesmo existe ainda (mas não se preocupe com isso). Essa variável “db” representa agora o banco workshop e podemos verificar quais coleções existem atualmente neste banco usando o comando abaixo:
+
+> show collections
+Isso também não deve listar nada, mas não se importe com isso também. Assim como fazemos com objetos JS que queremos chamar funções, usaremos o db para listar os documentos de uma coleção de customers (clientes) da seguinte forma:
+
+> db.customers.find()
+find é a função para fazer consultas no MongoDB e, quando usada sem parâmetros, retorna todos os documentos da coleção. Obviamente, não listará nada, pois não inserimos nenhum documento ainda, algo que iremos fazer agora com a função insert:
+
+> db.customers.insert({ nome: "Luiz", idade: 29 })
+A função insert espera um documento JSON por parâmetro com as informações que queremos inserir, sendo que além dessas informações, o MongoDB vai inserir um campo _id automático como chave primária desta coleção.
+
+Como sabemos se funcionou? Além da resposta ao comando insert (nInserted indica quantos documentos foram inseridos com o comando), você pode executar o find novamente para ver que agora sim temos customers no nosso banco de dados. Além disso, se executar o “show collections” e o “show databases”, verá que agora sim possuímos uma coleção customers e uma base workshop nesse servidor.
+
+Tudo foi criado a partir do primeiro insert e isso mostra que está tudo funcionando bem no seu servidor MongoDB!
+
+E assim encerra a primeira parte do nosso tutorial de MongoDB para iniciantes. Na parte 2, que você confere neste link, falo dos comandos elementares do MongoDB (CRUD) e de modelagem orientada à documentos.
+
+
+
+//====================================================================================================================================================
+
+#parte 02
+
+Na parte anterior deste tutorial sobre MongoDB para iniciantes em NoSQL, falei sobre os conceitos mais elementares deste banco de dados, sobre quando usar e quando não usar esta tecnologia, quais as principais diferenças dele para outros bancos de dados e deixamos o servidor e o cliente prontos para receber comandos, sendo que inclusive executamos alguns para testar tudo.
+
+Se não fez a primeira parte do tutorial, faça. No mínimo a seção final, onde configuramos o ambiente. Continuaremos exatamente de onde a última parte parou.
+
+Nesta segunda parte, falaremos dos comandos elementares (CRUD) do MongoDB.
+
+Insert “avançado”
+Na seção anterior, aprendemos a fazer um find() que retorna todos os documentos de uma coleção e um insert que insere um novo documento em uma coleção, além de outros comandos menores. Agora, vamos adicionar mais alguns registros no seu terminal cliente Mongo:
+
+> custArray = [{ nome : "Fernando", idade : 29 }, { nome : "Teste", "uf" : "RS" }]
+> db.customers.insert(custArray)
+Atenção: para o nome dos campos dos seus documentos e até mesmo para o nome das coleções do seu banco, use o padrão de nomes de variáveis JS (camel-case, sem acentos, sem espaços, etc).
+
+Nota: no exemplo acima, a variável custArray passa a existir durante toda a seção do terminal a partir do comando seguinte.
+
+Nesse exemplo passei um array com vários documentos para nossa função insert inserir na coleção customers e isso nos trás algumas coisas interessantes para serem debatidas. Primeiro, sim, você pode passar um array de documentos por parâmetro para o insert. Segundo, você notou que o segundo documento não possui “idade”? E que ele possui um campo “uf”?
+
+Find “avançado”
+Para se certificar de que todos os documentos foram realmente inseridos na coleção, use o seguinte comando:
+
+> db.customers.find().pretty()
+
+É o mesmo comando find() que usamos anteriormente, mas com a função pretty() no final, para identar o resultado da função no terminal, ficando mais fácil de ler. Use e notará a diferença, principalmente em consultas com vários resultados.
+
+Mas voltando à questão do “uf”, ao contrário dos bancos relacionais, o MongoDB possui schema variável, ou seja, se somente um customer tiver “uf”, somente ele terá esse campo. Não existe um schema pré-definido compartilhado entre todos os documentos, cada um é independente. Obviamente, considerando que eles compartilham a mesma coleção, é interessante que eles possuam coisas em comum, caso contrário, não faz sentido guardar eles em uma mesma coleção.
+
+Mas como fica isso nas consultas? E se eu quiser filtrar por “uf”? Não tem problema!
+
+Essa é uma boa deixa para eu mostrar como filtrar um find() por um campo do documento:
+
+> db.customers.find({uf: "RS"})
+Note que a função find pode receber um documento por parâmetro, representando o filtro a ser aplicado sobre a coleção para retornar documentos. Nesse caso, disse ao find que retornasse todos os documentos que possuam o campo uf definido como “RS”. O resultado no seu terminal deve ser somente o customer de nome “Teste” (não vou falar do _id dele aqui, pois o valor muda completamente de um servidor MongoDB para outro).
+
+Atenção: MongoDB é case-sensitive, ao contrário dos bancos relacionais. Então cuidado!
+
+Experimente digitar outros valores ao invés de “RS” e verá que eles não retornam nada, afinal, não basta ter o campo uf, ele deve ser exatamente igual a “RS”.
+
+Além de campos com valores específicos, esse parâmetro do find permite usar uma infinidade de operadores, como por exemplo, trazer todos documentos que possuam a letra ‘a’ no nome:
+
+> db.customers.find({nome: { $regex: /a/ }})
+Se você já mexeu com expressões regulares (regex) em JS antes, sabe exatamente como usar e conhece o poder desse recurso junto a um banco de dados, sendo um equivalente muito mais poderoso ao LIKE dos bancos relacionais.
+
+Mas e se eu quiser trazer todos os customers maiores de idade?
+
+> db.customers.find({idade: {$gte: 18}})
+
+O operador $gte (Greater Than or Equal) retorna todos os documentos que possuam o campo idade e que o valor do mesmo seja igual ou superior à 18. E podemos facilmente combinar filtros usando vírgulas dentro do documento passado por parâmetro, assim como fazemos quando queremos inserir campos em um documento:
+
+> db.customers.find({nome: "Luiz", idade: {$gte: 18}})
+O que a expressão acima irá retornar?
+
+Se você disse customers, cujo os nomes sejam “Luiz” e que sejam maiores de idade, você acertou!
+
+E a expressão abaixo:
+
+> db.customers.find({nome: { $regex: /a/ }, idade: {$gte: 18}})
+Customers cujo os nomes contenham a letra ‘a’ e que sejam maiores de idade, é claro!
+
+Outros operadores que você pode usar junto ao filtro do find são:
+
+$e: exatamente igual (=)
+$ne: diferente (<> ou !=)
+$gt: maior do que (>)
+$lt: menor do que (<)
+$lte: menor ou igual a (<=)
+$in: o valor está contido em um array de possibilidades, como em um OU. Ex: {idade: {$in: [10,12] }}
+$all: MongoDB permite campos com arrays. Ex: { tags: [“NodeJS”, “MongoDB”] }. Com esse operador, você compara se seu campo multivalorado possui todos os valores de um array específico. Ex: {tags: {$all: [“NodeJS”, “Android”]}}
+Entre outros!
+
+Você também pode usar “findOne” ao invés de “find” para retornar apenas o primeiro documento, ou ainda, as funções limit e skip para limitar o número de documentos retornados. E para ignorar alguns documentos, especificamente, da seguinte maneira:
+
+> db.customers.find().skip(1).limit(10)
+
+No exemplo acima, retornaremos 10 customers, ignorando o primeiro existente na coleção.
+
+E para ordenar? Usamos a função sort no final de todas as outras, com um documento indicando quais campos e se a ordenação por aquele campo é crescente (1) ou decrescente (-1), como abaixo, em que retorno todos os customers ordenados pela idade:
+
+> db.customers.find().sort({idade: 1})
+Nota: assim como nos bancos relacionais, os métodos de consulta retornam em ordem de chave primária por padrão, o que neste caso é: o _id.
+
+Ok, vimos como usar o find de maneiras bem interessantes e úteis, mas e os demais comandos de manipulação do banco?
+
+Update
+Além do insert que vimos antes, também podemos atualizar documentos já existentes, por exemplo, usando o comando update e derivados. O jeito mais simples (e mais burro) de atualizar um documento, é chamando a função update na coleção com dois parâmetros:
+
+documento de filtro para saber qual(is) documento(s) será(ão) atualizado(s);
+novo documento que substituirá o antigo;
+Como em:
+
+> db.customers.update({nome: "Luiz"}, {nome: "Luiz", idade: 29, uf: "RS"})
+Como resultado, você deve ter um nModified maior do que 1, mostrando quantos documentos foram atualizados.
+
+Por que essa é a maneira mais burra de fazer um update? Porque além de perigosa, ela exige que você passe o documento completo a ser atualizado no segundo parâmetro, pois ele substituirá o original.
+
+Primeira regra do update inteligente: se você quer atualizar apenas um documento, comece usando “updateOne” ao invés de “update”. O updateOne vai te obrigar a usar operadores, ao invés de um documento inteiro para a atualização, o que é muito mais seguro.
+
+Segunda regra do update inteligente: sempre que possível, use a chave primária (_id) como filtro da atualização, pois ela é sempre única dentro da coleção.
+
+Terceira regra do update inteligente: sempre use operadores ao invés de documentos inteiros no segundo parâmetro, independente do número de documentos que serão atualizados.
+
+Mas que operadores são esses?
+
+Assim como o find possui operadores de filtro, o update possui operadores de atualização. Se eu quero, por exemplo, mudar apenas o nome de um customer, eu não preciso enviar todo o documento do respectivo customer com o nome alterado, mas somente a expressão de alteração do nome, como abaixo (já usando o _id como filtro, que é mais seguro):
+
+> db.customers.updateOne({_id: ObjectId("59ab46e433959e2724be2cbd")}, {$set: {idade: 28}})
+Nota: para saber o _id correto do seu update, faça um find primeiro e não tente copiar o meu, pois não vai repetir.
+
+Essa função vai alterar (operador $set) a idade para o valor 28 do documento cujo _id seja “59ab46e433959e2724be2cbd” (note que usei uma função ObjectId para converter, pois esse valor não é uma string).
+
+Nota: você pode usar null se quiser “limpar” um campo.
+
+O operador $set recebe um documento contendo todos os campos que devem ser alterados e seus respectivos novos valores. Qualquer campo do documento original que não seja indicado no set, continuará com os valores originais.
+
+Atenção: o operador $set não adiciona campos novos em um documento, somente altera valores de campos já existentes.
+
+Não importa o valor que ela tenha antes, o operador $set vai sobrescrevê-lo. Agora, se o valor anterior importa, como quando queremos incrementar o valor de um campo, não se usa o operador $set, mas sim, outros operadores. A lista dos mais úteis operadores de update estão abaixo:
+
+$unset: remove o respectivo campo do documento;
+$inc: incrementa o valor original do campo com o valor especificado;
+$mul: multiplica o valor original do campo com o valor especificado;
+$rename: muda o nome do campo para o nome especificado;
+Além disso, existe um terceiro parâmetro oculto no update, que são as opções de update. Entre elas, existe uma muito interessante do MongoDB: upsert, como abaixo:
+
+> db.customers.updateOne({nome: "LuizTools"}, {nome: "LuizTools", uf: "RS"}, {upsert: true})
+Um upsert é um update como qualquer outro, ou seja, vai atualizar o documento que atender ao filtro passado como primeiro parâmetro, porém, se não existir nenhum documento com o respectivo filtro, ele será inserido como se fosse um insert.
+
+upsert = update + insert
+
+Eu já falei como amo esse banco de dados?
+
+Delete
+Pra encerrar o nosso conjunto de comandos mais elementares do MongoDB, falta o delete.
+
+Existe uma função delete e uma deleteOne, o que a essa altura do campeonato, você já deve saber a diferença. Além disso, assim como o find e o update, o primeiro parâmetro do delete é o filtro que vai definir quais documentos serão deletados, e todos os operadores normais do find são aplicáveis.
+
+Sendo assim, de maneira bem direta:
+
+> db.customers.delete({nome: "Luiz"})
+Vai excluir todos os clientes cujo nome seja igual a “Luiz”.
+
+Simples, não?
+
+Obviamente, existem coisas muito mais avançadas do que esse rápido tópico de MongoDB. Lhe encorajo a dar uma olhada no site oficial do banco de dados, onde há a seção de documentação, vários tutoriais e até mesmo a possibilidade de tirar certificações online para garantir que você realmente entendeu a tecnologia.
+
+Na terceira e última parte deste tutorial de MongoDB para iniciantes, falarei de modelagem de bancos de dados orientados à documentos. Aguarde!
+
+//====================================================================================================================================================
+
+#parte 03
+
+Este é o meu terceiro post da série “tutorial MongoDB para iniciantes em NoSQL “, caso esteja chegando agora aqui no blog, sugiro dar uma olhada na parte um e parte dois.
+
+No tutorial de hoje, vamos explorar alguns comandos muito utilizados para administração de bancos de dados MongoDB, como os comandos de dump e restore, úteis para migrar do ambiente local para produção ou mesmo entre diferentes provedores de cloud computing. Além disso, veremos como mapear nomes de coleções e campos nos documentos.
+
+Fazendo backup com MongoDump
+Uma das maneiras de fazer backup da sua base de dados MongoDB é usando o utilitário de linha de comando mongodump, que fica na pasta bin da sua instalação de MongoDB.
+
+Antes de fazer o dump, sugiro criar uma pasta backup na mesma pasta do MongoDB, no mesmo nível da pasta bin.
+
+Considerando que você está rodando um servidor de MongoDB localmente e sem segurança (apenas subiu um mongod como ensinado na parte um desta série) o processo é muito simples. Abra seu terminal de linha de comando e navegue até a pasta bin do MongoDB. Execute o seguinte comando (considerando que tenho uma pasta backup dentro de MongoDB):
+
+C:\mongodb\bin> mongodump --out "C:\mongodb\backup"
+O parâmetro ‘–out’ define a pasta onde serão salvas pastas com os nomes das databases e dentro delas os arquivos .bson contendo todas as collections. Os arquivos .bson contém todos os documentos JSON da coleção em questão, mas em formato binário.
+
+Já se o seu servidor for remoto e/ou possuir credenciais de acesso (um cenário bem comum), você deve passar alguns parâmetros adicionais ao executar o utilitário mongodump:
+
+-h <hostname>:<port>: o parâmetro -h permite especificar o endereço completo do host onde está hospedado seu banco MongoDB, incluindo porta. Ex:
+
+C:\mongodb\bin> mongodump -h tatooine.mongodb.umbler.com:27017 --out "C:\mongodb\backup"
+-u <username>: o parâmetro -u permite especificar o nome de usuário que será utilizado para conectar na base a ser feito o dump.
+
+-p <password>: a senha do usuário definido no parâmetro -u. Ex:
+
+C:\mongodb\bin> mongodump -h tatooine.mongodb.umbler.com:27017 -u luiztools -p mudar123 --out "C:\mongodb\backup"
+Restaurando backup com MongoRestore
+Uma vez que você tenha feito seu backup, pode restaurá-lo em outro servidor usando o mongorestore. Para realizar este exemplo da maneira mais didática possível, sugiro que tenha uma conta criada em algum provedor de nuvem que ofereça serviços de MongoDB, como a Umbler (que te dá créditos para usar de graça) ou a mlab.com, que é um serviço exclusivo de MongoDB (dão 500MB de graça pra testar).
+
+Na Umbler, que é a empresa da qual sou Dev Evangelist, você tem de criar primeiro um site em qualquer tecnologia (que tal Node.js?) e depois acessar a opção banco de dados e criar um banco do tipo MongoDB. Não esqueça de anotar os dados de acesso que você definir neste momento, para não se esquecer depois.
+
+Depois que você cria o banco, clicando nele para ver os detalhes, você notará que existem informações para gerenciamento externo, que é justamente o que precisamos para restaurar o backup que fizemos anteriormente.
+
+
+Gerenciamento Externo do MongoDB
+Novamente no terminal de linha de comando, acesse a pasta bin da sua instalação de MongoDB para encontrar o utilitário mongorestore. Use os seguintes parâmetros junto ao mongorestore para orientá-lo corretamente:
+
+-h <hostname>:<port>: para definir endereço do servidor e porta
+
+-d <database>: para definir o nome da base de dados no servidor de destino. Se a base não existir, ela será criada (se o usuário utilizado possuir permissão para isso)
+
+-u <username>: para definir o nome de usuário no servidor de destino
+
+-p <password>: a senha do usuário definido em -u
+
+Além destes parâmetros, a última informação para executar o mongorestore corretamente é o caminho até a pasta de backup da sua database, como abaixo:
+
+C:\mongodb\bin> mongorestore -h tatooine.mongodb.umbler.com:27017 -u luiztools -p mudar123 "C:\mongodb\backup\database"
+Opcionalmente, você pode passar um parâmetro -c informando apenas uma coleção que deseja restaurar (ao invés de restaurar a database inteira).
+
+Caso tenha tido problemas em fazer o dump e o restore, eu mostro na prática no finalzinho do vídeo abaixo, que gravei pra Umbler:
+
+
+
+Alterando metadados
+Nos bancos relacionais temos duas categorias de comandos: DDL e DML. Comandos DML ou Data Manipulation Language são o equivalente ao CRUD que fizemos nas duas partes anteriores desta série. Já os comandos DDL ou Data Definition Language, são os comandos CREATE, ALTER, DROP, etc que os bancos relacionais possuem para modificar os metadados.
+
+O MongoDB não possui uma diferenciação de dados e metadados tão clara quanto nos bancos relacionais, o que impacta diretamente no que você pode e não pode fazer depois que sua base já está em produção. Mudar o nome da sua base de dados, por exemplo, não é possível.
+
+Apesar disso, mudar nome de coleções é possível, embora não recomendado durante horários de muito acesso ao seu banco, pois todas as queries em andamento àquela coleção são dropadas. Para mudar o nome de uma coleção, conecte-se à sua base de dados usando o utilitário mongo, como vimos nos artigos anteriores, e depois use a função renameCollection, passando o novo nome da coleção:
+
+C:\mongodb\bin> db.clientes.renameCollection("clientes")
+Note que o MongoDB não é case-sensitive nos nomes de databases, mas nos nomes de coleções, nomes de campos e valores de campos, sim.
+
+Nos bancos relacionais, quando queremos adicionar uma nova coluna, devemos fazer um ALTER TABLE, certo? No MongoDB não há necessidade disso, uma vez que o schema é flexível e conforme você adiciona novos documentos com novos campos, eles passam a surgir e pronto. Mais tarde, se quiser adicionar novos campos em documentos já existentes, basta usar um comando ‘update’ usando o update-operator $set, como já vimos anteriormente:
+
+db.clientes.updateOne({_id: ObjectId("123abc")}, {$set: {novoCampo: valor}})
+Novamente falando dos bancos relacionais, quando queremos remover uma coluna, também temos de fazer um ALTER TABLE. No MongoDB não é necessário, basta executar um update passando o update-operator $unset, como abaixo:
+
+db.clientes.updateOne({_id: ObjectId("123abc")}, {$unset: {campovelho}})
+E por fim, caso deseje apenas renomear um campo já existente (coisa que também iria requerer um ALTER TABLE no SQL), basta fazermos um update novamente, usando o update-operator $rename:
+
+db.clientes.updateMany({}, {$rename: {nomevelho: nomenovo}})
+Note que usei aqui um updateMany e que como filtro passei um objeto vazio. Isso fará com que o update seja realizado sobre TODOS os documentos da coleção clientes. Outro ponto de atenção é que o $rename permite múltiplas renomeações no mesmo update, apenas informando todos os campos que serão renomeados e seus novos nomes, no formato JSON tradicional (que nem em um $set).
+
+A título de curiosidade, e para evitar surpresas, o comando $rename é apenas um atalho para o uso do comando $unset no nome antigo, seguido de um $set com o novo nome e valor antigo. Por causa disso, certifique-se de que não ocorram colisões de nomes na sua coleção para evitar surpresas indesejadas.
+
+No próximo artigo da série, falo sobre modelagem de banco de dados orientado à documentos, para tentar jogar uma luz sobre como fazê-lo conforme mandam as guidelines oficiais do MongoDB. Você também pode ler o que escrevi sobre boas práticas com MongoDB no blog da Umbler!
+
+
+//====================================================================================================================================================
+
+#parte 04
+
+
+E chegamos ao quarto artigo da minha série de tutoriais de MongoDB para iniciantes em NoSQL. Caso esteja caindo de pára-quedas nesta série, seguem os links dos artigos e seus respectivos assuntos:
+
+Parte 1: conceitos básicos, criação do servidor, banco, coleções e documentos;
+Parte 2: CRUD (comandos básicos de consulta, inserção, atualização e exclusão);
+Parte 3: backup, restauração e alteração de metadados/schema;
+Neste quarto artigo tratarei de um tópico complicado, denso e muitas vezes controverso: modelagem de dados orientada a documentos.
+
+Me basearei aqui em experiências próprias de mais de dois anos trabalhando com esta tecnologia, em projetos de todos os tamanhos, além das guidelines oficiais, obviamente. Ao invés de ficar falando sobre como você deve modelar, usarei uma didática baseada em comparação entre exemplos com modelos relacionais famosos para auxiliar na assimilação dos conhecimentos.
+
+Preparado para finalmente entender como modelar seus bancos MongoDB?
+
+Princípios importantes
+Primeiramente, tenha a mente aberta. Entenda que tudo que você aprendeu nas disciplinas de banco de dados da faculdade estão certas, mas em outro contexto, não nesse. Que as Formas Normais não significam nada aqui.
+
+Eu tive a sorte de ter conhecido o MongoDB em um projeto já maduro que rodava há três anos e tinha muitos dados. Com isso, já aprendi do “jeito certo”, pois quando você cria um banco em um projeto pequeno, qualquer modelagem funciona e é difícil de imaginar como algumas decisões realmente podem lhe afetar no futuro.
+
+O primeiro ponto a entender, e que muitas se recusam veemente é que você deve evitar relacionamentos entre documentos diferentes. Apesar dos avanços neste sentido nas últimas versões do MongoDB, este ainda é um banco não-relacional e, portanto, não faz sentido algum modelá-lo pensando em relacionamentos.
+
+O segundo ponto é que documentos não são equivalentes a linhas de banco de dados. Essa é uma comparação muito simplória e que tende a levar ao erro. Documentos são entidades auto-suficientes, com todas as informações que lhes competem. Uma analogia que me ajuda a pensar nos documentos do jeito certo são as INDEXED VIEWS dos bancos relacionais. O plano é que, na maioria das consultas, com um filtro e sem “JOIN” algum, você consiga trazer todos os dados que necessita para montar uma tela de sua aplicação.
+
+O terceiro e último ponto é manter simples. Não é porque o MongoDB permite que você aninhe até 100 níveis de subdocumentos dentro de um documento que você deve fazê-lo. Não é porque o MongoDB permite até 16MB por documento que você deve ter documentos com este tamanho. Não é porque você pode ter até 64 índices por coleção que você deve ter tudo isso. Essas e outras limitações estão lá na documentação oficial.
+
+MongoDB não é magia, encare ele com a mesma seriedade que encara os bancos relacionais e estude bastante. A curva de aprendizagem inicial é realmente mais simples do que SQL, mas a longo prazo, é tão difícil quanto. Como já mencionei no artigo sobre persistência poliglota, os bancos não-relacionais não são melhores que os relacionais. Eles não eliminam os problemas dos relacionais, ao invés disso eles possuem os seus próprios problemas.
+
+Para que você entenda tudo isso na prática, preparei um case simples de banco de dados que é bem comum, enquanto que futuramente espero ter tempo para apresentar cases mais complexos. Obviamente podem haver variações tanto na implementação relacional citada aqui, quanto a não-relacional que eu sugeri. Se apegue mais às ideias do que aos detalhes e use a seção de comentários para discutirmos o que você não concorda e/ou não entendeu.
+
+Modelagem de Blog: Relacional
+Bom, você está em um blog neste exato momento, então nada que eu disser aqui será uma novidade para você. Um blog possui basicamente artigos com id, título, data de publicação, conteúdo, categorias, tags, autor, status (rascunho, agendado, publicado, etc) e URL. As categorias possuem id, nome e descrição. Os autores possuem id, nome, foto, permissões, usuário, senha e bio. Além disso, temos os comentários. Ah os comentários, possuem toda uma complexidade própria: autor, data, texto, etc.
+
+Em um banco relacional, como faríamos? (note que uso tabelas no singular e sem prefixos)
+
+Tabela 1: Artigo, com ID (PK), Titulo (NVARCHAR), DataPublicacao (DATETIME), Conteúdo (NVARCHAR), IDAutor (FK), Status (INT – considerando um enumerador) e URL (NVARCHAR). Esta é a tabela principal e como era de esperar, o IDAutor vai referenciar outra tabela. Mas cadê tags e categorias?
+Tabela 2: Autor, com ID (PK), Nome (NVARCHAR), Bio (NVARCHAR), Foto (NVARCHAR – porque guardarei apenas o caminho da foto), Usuario (NVARCHAR, unique) e Senha (NVARCHAR)
+Tabela 3: Categoria, com ID (PK), Nome (NVARCHAR) e Descricao (NVARCHAR). A descrição é útil nas páginas de posts de uma mesma categoria.
+Tabela 4: ArtigoCategoria, com ID (PK), IDArtigo (FK), IDCategoria (FK). Um artigo pode ter várias categorias e cada categoria pode estar em vários artigos, o clássico “N para N”, um câncer dos bancos relacionais na minha opinião.
+Tabela 5: Tag, com ID (PK), IDArtigo (FK), Nome (NVARCHAR). Aqui podemos fazer um “1 para N”, onde cada artigo pode ter várias tags ou um “N para N”, se quiser a não-repetição dos nomes de tags.
+Tabela 6: Comentario, com ID (PK), IDArtigo (FK), Nome (NVARCHAR – autor do comentário), Texto (NVARCHAR – o comentário em si), Data (DATETIME).
+Pode ser mais complexo e poderoso que isso, mas vamos manter assim, visto que o objetivo aqui não é modelar o melhor banco de dados para blogs do mundo, mas sim apenas para mostrar como uma modelagem dessas pode ser feita em um banco relacional e em um não-relacional no mesmo artigo.
+
+
+Diagrama ER Blog
+Considerando o banco descrito acima, como faríamos para montar uma tela de uma postagem completa no site do blog?
+
+SELECT Artigo.*, Autor.Nome, Autor.ID FROM Artigo 
+INNER JOIN Autor ON Autor.ID = Artigo.IDAutor 
+WHERE Artigo.URL = 'XXX'
+Essa consulta traz as informações do Artigo e de seu Autor (só o que importa do autor para a página do artigo). Mas e as tags e categorias? Precisamos de mais duas consultas para isso:
+
+SELECT Categoria.* FROM Categoria 
+INNER JOIN ArtigoCategoria ON ArtigoCategoria.IDCategoria = Categoria.ID
+WHERE ArtigoCategoria.ID = x;--esse ID eu pego na primeira consulta
+
+SELECT Tag.Nome FROM Tag
+WHERE IDArtigo = x;
+Puxa, esqueci dos comentários ainda, certo? Vamos trazê-los também!
+
+SELECT Comentario.* FROM Comentario
+WHERE IDArtigo = x
+Modelagem de Blog: Não-Relacional
+Em bancos de dados não-relacionais, o primeiro ponto a considerar é que você deve evitar relacionamentos, afinal, se for pra usar um monte de FK, use SQL e seja feliz!
+
+A maioria das relações são substituídas por composições de sub-documentos dentro de documentos, mas vamos começar por partes. Primeiro, vamos criar um documento JSON que represente o mesmo artigo do exemplo anterior com SQL (dados de exemplo apenas), como pertencendo à uma coleção Artigo:
+
+{
+   _id: ObjectId("123abc"),
+   titulo: "Tutorial MongoDB",
+   dataPublicacao: new Date("2016-05-18T16:00:00Z"),
+   conteudo: "Be-a-bá do MongoDB",
+   idAutor: ObjectId("456def"),
+   status: 1,
+   url: "http://www.luiztools.com.br/post/1"
+}
+Primeira diferença: aqui os IDs não são numéricos auto-incrementais, mas sim ObjectIds auto-incrementais. Segunda diferença: não há schema rígido, então eu posso ter artigos com mais informações do que apenas estas, ou com menos. Mas e aquele idAutor ali?
+
+Se eu colocar daquele jeito ali, com idAutor, quando eu for montar a tela do artigo eu sempre teria de ir na coleção de Autores para pegar os dados do autor, certo? Mas se eu sei quais informações eu preciso exibir (apenas nome e id, assim como na consulta SQL), o certo a se fazer aqui é reproduzir estas informações como um subdocumento de artigo, como abaixo:
+
+{
+   _id: ObjectId("123abc"),
+   titulo: "Tutorial MongoDB",
+   dataPublicacao: new Date("2016-05-18T16:00:00Z"),
+   conteudo: "Be-a-bá do MongoDB",
+   autor: {
+      _id: ObjectId("456def"),
+      nome: "Luiz"
+   },
+   status: 1,
+   url: "http://www.luiztools.com.br/post/1"
+}
+Esse é o jeito “certo” de fazer com MongoDB! Note que o subdocumento autor possui apenas os dados necessários para montar uma tela de artigo. Mas se precisarmos depois da informação completa do autor, podemos pegá-la a partir de seu id.
+
+Como MongoDB não garante integridade referencial por não possuir FK, temos de tomar muito cuidado quando você for excluir um autor, para desvinculá-lo em todos os artigos dele, e quando você for atualizar o nome dele, para atualizar em todos artigos dele.
+
+Já a coleção Autor, fica com documentos bem parecidos com a tabela original em SQL:
+
+{
+   _id: ObjectId("456def"),
+   nome: "Luiz Duarte",
+   bio: "Empreendedor, professor, etc",
+   foto: "1.jpg",
+   usuario: "luiz",
+   senha: "ds6dsv8ds5v76sd5v67d5v6"
+}
+Note que aqui eu não vou embutir todos os artigos deste autor, pois seria inviável. O foco do blog são os artigos, não os autores, logo, os artigos vão conter o seu autor dentro de si, e não o contrário!
+
+Um adendo: MongoDB trabalha muito bem com arquivos binários embutidos em documentos, então se quisesse usar um binário de imagem no campo foto, funcionaria perfeitamente bem, melhor que no SQL tradicional (BLOBs, arghhh!).
+
+Mas e as categorias e tags? Como ficam?
+
+Primeiro que aqui não precisamos de tabelas-meio quando temos relacionamento N-N. Todos os relacionamentos podem ser representados na modalidade 1-N usando campos multivalorados, como mostrado no exemplo abaixo, de uma v3 do documento de artigo:
+
+{
+   _id: ObjectId("123abc"),
+   titulo: "Tutorial MongoDB",
+   dataPublicacao: new Date("2016-05-18T16:00:00Z"),
+   conteudo: "Be-a-bá do MongoDB",
+   autor: {
+      _id: ObjectId("456def"),
+      nome: "Luiz"
+   },
+   status: 1,
+   url: "http://www.luiztools.com.br/post/1",
+   categorias: [{
+      _id: ObjectId("789ghi"),
+      nome: "cat1"
+   }],
+   tags: ["tag1", "tag2"]
+}
+Tags são apenas strings tanto na modelagem relacional original quanto nesta modelagem orientada a documentos. Sendo assim, um campo do tipo array de String resolve este cenário sem maiores problemas.
+
+Já as categorias são um pouco mais complexas, pois podem ter informações extras como uma descrição. No entanto, como para exibir o artigo na tela do sistema nós só precisamos do nome e do id das categorias, podemos ter um array de subdocumentos de categoria dentro do documento de artigo.
+
+Em paralelo deveremos ter uma coleção de categorias, para armazenar os demais dados, mantendo o mesmo ObjectId:
+
+{
+   _id: ObjectId("789ghi"),
+   nome: "cat1",
+   descricao: "Categoria bacana"
+}
+Novamente, caso no futuro você venha a excluir categorias, terá de percorrer toda a coleção de artigos visando remover as ocorrências das mesmas. No caso de edição de nome da categoria original, também. Com as tags não temos exatamente este problema, uma vez que elas são mais dinâmicas.
+
+Para encerrar, temos os comentários. Assim como fizemos com as categorias, vamos embutir os documentos dos comentários dentro do documento do artigo ao qual eles fazem parte, afinal, não faz sentido algum eles existirem alheios ao artigo do qual foram originados.
+
+{
+   _id: ObjectId("123abc"),
+   titulo: "Tutorial MongoDB",
+   dataPublicacao: new Date("2017-10-18T16:00:00Z"),
+   conteudo: "Be-a-bá do MongoDB",
+   autor: {
+      _id: ObjectId("456def"),
+      nome: "Luiz"
+   },
+   status: 1,
+   url: "http://www.luiztools.com.br/post/1",
+   categorias: [{
+      _id: ObjectId("789ghi"),
+      nome: "cat1"
+   }],
+   tags: ["tag1", "tag2"],
+   comentarios: [{
+      _id: ObjectId("012jkl"),
+      nome: "Hater",
+      texto: "Não gosto do seu blog",
+      data: new Date("2017-10-18T18:00:00Z")
+   }]
+}
+Note que aqui optei por ter um _id no comentário, mesmo ele não possuindo uma coleção em separado. Isso para que seja possível mais tarde moderar comentários.
+
+E esse é um exemplo de documento completo, modelado a partir do problema de um site de artigos, blog, wiki, etc.
+
+Ah, mas e como fazemos a consulta necessária para montar a tela de um artigo? Lembra que em SQL eram inúmeras consultas cheias de INNER JOINs? No MongoDB, precisamos de apenas uma consulta, bem simples, para montar a mesma tela:
+
+> db.Artigo.findOne({url: 'http://www.luiztools.com.br/post/1'});
+Essa consulta traz os mesmos dados que todas aquelas que fiz em SQL juntas. Isso porque a modelagem dos documentos é feita sem relacionamentos externos, o documento é auto-suficiente em termos de dados, como se fosse uma VIEW do SQL, mas muito mais poderoso.
+
+Claro, existem aqueles pontos de atenção que mencionei, sobre updates e deletes, uma vez que não há uma garantia nativa de consistência entre coleções. Mas lhe garanto, a performance de busca é incomparável, uma vez que a complexidade é baixíssima. Você inclusive pode criar um índice no campo url da coleção Artigo, para tornar a busca ainda mais veloz, com o comando abaixo:
+
+> db.Artigo.createIndex({url: 1});
+Demais, não?!
+
+Você pode estar preocupado agora com a redundância de dados, afinal diversas strings se repetirão entre os diversos anúncios, como o nome do autor, tags, nomes de categoria, etc. Não se preocupe com isso, o MongoDB trabalha muito bem com volumes muito grandes de dados e desde que você tenha bastante espaço em disco, não terá problemas tão cedo. Obviamente não recomendo que duplique conteúdos extensos, mas palavras como essas que ficaram redundantes na minha modelagem não são um problema.
+
+No entanto, lidar com subdocumentos e campos multivalorados adiciona um pouco mais de complexidade à manipulação do MongoDB, e trato disso nesse artigo, que é continuação da série!
+
+
+//====================================================================================================================================================
+
+#parte 05
+
+ chegamos ao quinto artigo da minha série sobre MongoDB para iniciantes em NoSQL. Veja o começo desta série neste link.
+
+Neste quinto artigo, tratarei de como manipular documentos que possuam subdocumentos e campos multivalorados, usando como base o banco de blog que modelamos no artigo anterior.
+
+Boa parte do conteúdo deste artigo se encontra na segunda metade do vídeo abaixo que gravei pra Umbler. Além da leitura, recomendo a visualização para ver como tudo fica na prática:
+
+
+
+CRUD com Subdocumentos
+No segundo artigo desta série, nós vimos como buscar, inserir, atualizar e excluir documentos em coleções MongoDB. No entanto, sempre com documentos planos, sem níveis, a forma mais básica de armazenar dados.
+
+Mas e quando temos um subdocumento dentro de outro documento, assim como o autor dentro de um artigo de blog?
+
+{
+   _id: ObjectId("123abc"),
+   titulo: "Artigo 1",
+   autor: {
+      _id: ObjectId("456def"),
+      nome: "Luiz"
+   }
+   tags: ["NodeJs", "MongoDB"]
+}
+Vamos começar pelo C do CRUD, que no caso do MongoDB é representado pelo método insert. O comando abaixo insere um novo artigo incluindo o subdocumento ‘autor’:
+
+> db.artigos.insert({ titulo: "Artigo 1", autor: { _id: ObjectId("456def"), nome: "Luiz" }, tags: null })
+Note que eu não passo o _id do artigo, pois ele é autoincremental e controlado pelo próprio MongoDB. Já no caso do autor, ele pertence à outra coleção, a de autores, e o _id que está junto dele deve ser o mesmo do autor original na sua referida coleção. Imagina-se que em uma aplicação que salve um artigo, que a informação do autor do artigo esteja em sessão ou em um componente de tela para ser passada ao MongoDB corretamente.
+
+Falando do R do CRUD, o find no MongoDB, podemos facilmente usar campos de subdocumentos como filtros em nossas consultas, como segue:
+
+> db.artigos.find({"autor.nome": "Luiz"})
+Essa consulta retorna todos os artigos cujo nome do autor seja literalmente Luiz. Qualquer filtro existente pode ser usado aqui, sobre qualquer campo do subdocumento autor, mas atenção à forma que referenciei o campo, usando o nome do subdocumento, seguido de um ‘.’, e depois o nome do campo. Repare também que neste caso o uso de aspas ao redor da expressão é obrigatório.
+
+Seguindo com o U do CRUD, vale tudo o que vimos até agora. Para substituir documentos que possuam subdocumentos usando o comando update, você tem de passá-los também, para não se perderem na atualização, como abaixo:
+
+> db.artigos.update({_id: ObjectId("456def")},{ titulo: "Artigo 1", autor: { nome: "Luiz" }, tags: null })
+Se for usar um campo de um subdocumento no filtro do update, valem as mesmas regras do filtro do find que expliquei anteriormente. O mesmo vale caso queira aplicar algum update operator em um campo de um subdocumento. Quer um exemplo prático?
+
+Na modelagem de blog que fizemos no artigo anterior, replicamos o nome e _id do autor em todos os artigos escritos por ele. Mas o que acontece caso o nome do autor seja alterado no documento original dele, que fica na coleção de autores?
+
+Teremos de replicar esta alteração em todos os artigos que tenham sido escritos por aquele autor, como abaixo. Neste exemplo, suponha que o autor Luiz teve o nome alterado para Luiz Fernando, então, temos de atualizar todos os posts escritos por ele. Como é somente esta pequena informação que mudou, usaremos o update-operator $set, para não ter de sobrescrever os documentos inteiros.
+
+> db.artigos.update({"autor.nome":"Luiz"},{$set: {"autor.nome": "Luiz Fernando"}})
+Para um update mais preciso, eu poderia substituir o filtro autor.nome por autor._id, considerando que nomes de autores podem ser repetir em um mesmo blog.
+
+Com os update-operators $set, $unset e $rename é possível manipular os campos dos subdocumentos também, da mesma forma que faria com o documento principal, apenas usando a notação “subdocumento.campo”.
+
+Finalizando o CRUD com subdocumentos, o D de delete é realizado usando as mesmas regras de filtro do find, caso queira excluir todos os documentos que possuam um valor específico em um campo de um subdocumento. Sem mistério algum.
+
+CRUD com campos multivalorados
+Outra preocupação é com a manipulação de elementos em campos multi-valorados, algo inexistente em bancos relacionais que sempre assumem relações 1-N ou N-N nestes casos. Salvo gambiarras que já vi por aí de salvar strings CSV ou JSON em coluna de registro e outras loucuras que sempre acabam gerando dor de cabeça, pois não são pesquisáveis.
+
+Começando pelo C do CRUD, o insert do MongoDB funciona de maneira muito óbvia para campos multivalorados: apenas passe null para nenhum valor ou o array (entre colchetes) de valores iniciais daquele elemento (sim, o MongoDB permite que depois você adicione ou remova elementos).
+
+Se você procurar no exemplo anterior de insert, verá que passei null no campo multivalorado de tags do artigo. A outra opção, passando valores iniciais, segue abaixo:
+
+> db.artigos.insert({ titulo: "Artigo 1", autor: { nome: "Luiz" }, tags: ["NodeJs", "MongoDB"] })
+Neste caso, o campo multivalorado tags é um array de strings. Caso deseje, você pode inserir um documento que possua campos multivalorados de documentos também, como no caso das categorias que modelamos no artigo anterior:
+
+> db.artigos.insert({ titulo: "Artigo 1", autor: { nome: "Luiz" }, tags: ["NodeJs", "MongoDB"], categorias: [{_id:ObjectId("abc123"), nome: "Desenvolvimento"}] })
+Mas é quando entramos no R do CRUD com campos multivalorados em MongoDB que começamos a explorar um novo universo de possibilidades e novos filter-operators da função find.
+
+Considere que temos três artigos salvos na nossa base MongoDB (omitirei os campos que não nos importam no momento):
+
+{
+   _id: ObjectId("123abc"),
+   titulo: "Artigo 1",
+   tags: ["NodeJs", "MongoDB"],
+   categorias: [{_id: 1, nome: "Desenvolvimento"}, {_id:2, nome: "Banco de Dados"}]
+},
+{
+   _id: ObjectId("456def"),
+   titulo: "Artigo 2",
+   tags: ["NodeJs"],
+   categorias: [{_id: 1, nome: "Desenvolvimento"}]
+},
+{
+   _id: ObjectId("789ghi"),
+   titulo: "Artigo 3",
+   tags: ["MongoDB"],
+   categorias: [{_id:2, nome: "Banco de Dados"}]
+}
+Para fazer buscas usando campos multivalorados como filtro é muito simples: você deve usar os operadores de filtro $all e $in. Exemplo de consulta por todos os artigos que possuam todas (ALL) as seguintes tags NodeJs e MongoDB:
+
+> db.Artigo.find({tags: {$all: ["NodeJs", "MongoDB"]}});
+O operador $all vai garantir que só sejam retornados artigos que possuam no mínimo as duas tags informadas (somente o Artigo 1), equivalente à consulta SQL abaixo:
+
+SELECT Artigo.* FROM Artigo
+INNER JOIN Tag ON Tag.IDArtigo = Artigo.ID
+WHERE Tag.Nome = 'NodeJs'
+INTERSECT
+SELECT Artigo.* FROM Artigo
+INNER JOIN Tag ON Tag.IDArtigo = Artigo.ID
+WHERE Tag.Nome = 'MongoDB'
+Agora um exemplo de consulta por todos os artigos que possuam uma (IN) das seguintes tags NodeJs ou MongoDB:
+
+> db.Artigo.find({tags: {$in: ["NodeJs", "MongoDB"]}});
+Neste caso, todos os três artigos serão retornados, assim como no equivalente SQL abaixo (coloquei reticências por preguiça de preencher todas as colunas):
+
+SELECT Artigo.ID, Artigo.Titulo ... FROM Artigo
+INNER JOIN Tag ON Tag.IDArtigo = Artigo.ID
+WHERE Tag.Nome IN ("NodeJs", "MongoDB")
+GROUP BY Artigo.ID, Artigo.Titulo ...
+Mas agora se quisermos apenas os artigos que possuam ao menos uma categoria (o campo de categorias é multivalorado, lembra?) com o nome Desenvolvimento? Quando aplicamos um filtro sobre um campo que é multivalorado o MongoDB entende que podemos passar um novo filtro a seguir, que será aplicado aos campos do subdocumento. Por exemplo:
+
+> db.artigos.find({categorias: {nome:"Desenvolvimento"}})
+Vai retornar todos os documentos que tenham ao menos uma categoria cujo nome seja ‘Desenvolvimento’. Também poderia usar filter-operators se fosse necessário como $gte, $regex, etc.
+
+Avançando para o U do CRUD, no update de campos multivalorados também temos diversas opções a serem exploradas, pois é no update que adicionamos e removemos elementos do nosso array, quando quisermos fazê-lo. Para tais tarefas deve-se usar os operadores $pull (remove o elemento do array) e $push (insere o elemento no array), sempre dentro de um comando de update, como segundo parâmetro (update-operator). Ex:
+
+//remove a string tag1 do array tags
+> db.artigos.updateOne({_id:1}, {$pull: {tags: "tag1"}})
+
+//adiciona a string tag1 no array tags
+> db.artigos.updateOne({_id:1}, {$push: {tags: "tag1"}})
+Pode parecer um pouco estranho no início, mas na verdade é muito mais simples, pois é a mesma ideia que já fazemos há anos com coleções em linguagens de programação, onde geralmente temos métodos como add e remove ou assemelhados.
+
+Finalizando, o D do CRUD em campos multivalorados funciona da mesma forma que o find, considerando que no deleteOne e deleteMany do MongoDB também passamos um filtro por parâmetro.
+
