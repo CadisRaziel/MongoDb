@@ -5,3 +5,6 @@ mongo -> depois de startar, connecta no mongodb
 
 sudo systemctl stop mongod -> para o mongodb
 
+
+Quando estiver dentro de uma collections ou dentro da database use o comando 'exit' para voltar ao terminal
+
