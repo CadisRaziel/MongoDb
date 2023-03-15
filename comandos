@@ -851,3 +851,55 @@ Pode parecer um pouco estranho no início, mas na verdade é muito mais simples,
 
 Finalizando, o D do CRUD em campos multivalorados funciona da mesma forma que o find, considerando que no deleteOne e deleteMany do MongoDB também passamos um filtro por parâmetro.
 
+
+----------------------- DIO ------------------------------
+
+listando database: show databases;
+
+entrando no databse: use nome_database;
+
+criando collection(Db): 
+//copped -> a collection vai ser limitada
+//max: quantidade de documentos
+explicita -> db.createCollection("nome_collection", {copped: true, max: 2}
+
+inserindo dado em uma collection: db.nome_collection.insertOne({"name": "teste 1"})
+
+mostrando dados de dentro da collection: db.nome_collection.find({})
+
+inserindo multiplos itens (repare que eles nao precisam ter os mesmos atributos no mongo):
+db.nome_collection.insert([{"name": "patrick", "age": 30}, {"name": "bob sponja"}])
+
+se o documento ja existe ele vai atualiza, se nao existe ele vai criar(repare que eu estou atualizando só a idade) |AQUI ELE ATUALIZA TODA A ROW|:
+db.nome_collection.save({"_id": ObjectId("9asd98fdsf84dsf498s"), "name": "patrick", "age": 35})
+
+atualizando um documento setando apenas um atributo que eu quero (aqui vou colocar uma idade) |ELE VAI ATUALIZA SOMENTE A IDADE|:
+db.nome_collection.update({"name": "bob sponja"}, {$set: :{"age": 50}})
+
+pegando todas as idades 40 e colocando 43
+db.nome_collection.update({"age": "40"}, {$set: :{"age": 43}},{multi: true})
+db.nome_collection.updateMany({"age": 44}, {$set: :{"age": 55}})
+
+pegando clientes com idade 55 anos:
+db.nome_collection.find({"age": 55})
+
+pegando o primeiro clientes com idade 55 anos:
+db.nome_collection.find({"age": 55}).limiti(1)
+
+pegando documentos com a idade entre 30 e 50:
+db.nome_collection.find({"age": {$in: [30,50]}})
+
+pegando documentos com nome lula molusco ou idade 41
+db.nome_collection.find({$or: [{"name": "lula molusco"}, {"age":41}]})
+
+pegando dados abaixo de uma certa idade:
+db.nome_collection.find({"age": {$lt: 55}})
+
+pegando dados abaixo menor ou igual a 30 anos:
+db.nome_collection.find({"age": {$lte: 55}})
+
+deletando um documentos com idade igual a 55 anos(ele vai deleta sómente o primeiro que achar):
+db.nome_collection.deleteOne({"age":  55})
+
+deletando multiplos documentos com idade igual a 55 anos(vai deletar todos que achar):
+db.nome_collection.deleteMany({"age":  55})
